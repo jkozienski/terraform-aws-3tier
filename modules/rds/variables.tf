@@ -34,12 +34,12 @@ variable "engine" {
 
 variable "engine_version" {
   type        = string
-  default     = "15.4"
+  default     = "15.10"
 }
 
 variable "instance_class" {
   type        = string
-  default     = "db.t3.micro"
+  default     = "db.t4g.micro"
 }
 
 variable "allocated_storage" {
@@ -52,10 +52,6 @@ variable "max_allocated_storage" {
   default     = 100
 }
 
-variable "backup_retention_period" {
-  type        = number
-  default     = 7
-}
 
 variable "multi_az" {
   type        = bool

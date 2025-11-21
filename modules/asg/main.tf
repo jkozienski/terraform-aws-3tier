@@ -1,12 +1,19 @@
 # Launch Template #
 
 resource "aws_launch_template" "this" {
-  name_prefix   = var.name
+  name = "${var.name}-${var.environment}-lt"
+  #name_prefix   = var.name
   image_id      = var.ami_id
   instance_type = var.instance_type
   key_name      = var.key_name
 
   vpc_security_group_ids = [var.sg_id]
+
+   user_data = base64encode(
+    templatefile("${path.module}/user_data.tpl", {
+    })
+  )
+
 
   # Opcjonalny IAM instance profile
   dynamic "iam_instance_profile" {
@@ -58,6 +65,16 @@ resource "aws_autoscaling_group" "this" {
   launch_template {
     id      = aws_launch_template.this.id
     version = "$Latest"
+  }
+
+  instance_refresh {
+    strategy = "Rolling"
+
+    preferences {
+      min_healthy_percentage = 50
+    }
+
+    triggers = ["launch_template"]
   }
 
   tag {

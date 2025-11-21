@@ -35,6 +35,7 @@ module "iam" {
   }
 }
 
+
 #ZAKOMENTOWANE BO TESTUJE BEZ DNS
 # Certificate ACM #
 # module "acm" {
@@ -70,16 +71,16 @@ module "alb" {
   vpc_id            = module.network.vpc_id
   public_subnet_ids = module.network.subnet_public_id
 
-  project            = var.project
-  environment        = var.environment
+  project     = var.project
+  environment = var.environment
   #acm_certificate_arn = module.acm.certificate_arn
 
-  alb_sg_id          = module.security.alb_sg_id
+  alb_sg_id = module.security.alb_sg_id
 
-   tags = {
-    Project = var.project
+  tags = {
+    Project     = var.project
     Environment = var.environment
-    Name = "${var.project}-${var.environment}-alb"
+    Name        = "${var.project}-${var.environment}-alb"
   }
 }
 
@@ -108,7 +109,7 @@ module "web_asg" {
   tags = {
     Project     = var.project
     Environment = var.environment
-    
+
   }
 }
 
@@ -149,23 +150,46 @@ module "database_rds" {
   subnet_ids = module.network.subnet_private_id
   db_sg_id   = module.security.db_sg_id
 
-  db_name   = var.db_name
-  username  = var.db_username
-  password  = var.db_password
+  db_name  = var.db_name
+  username = var.db_username
+  password = var.db_password
 
-  # Dla dev – lekkie ustawienia:
-  instance_class          = "db.t3.micro"
-  allocated_storage       = 20
-  max_allocated_storage   = 100
-  backup_retention_period = 7
-  multi_az                = false
-  deletion_protection     = false
+  instance_class          = var.instance_class
+  allocated_storage       = var.allocated_storage
+  max_allocated_storage   = var.max_allocated_storage
+  multi_az                = var.multi_az
+  deletion_protection     = var.deletion_protection
 
   tags = {
     Project     = var.project
     Environment = var.environment
   }
 }
+
+
+
+
+# SSM PARAMETERS #
+
+locals {
+  database_url = "postgres://${var.db_username}:${var.db_password}@${module.database_rds.endpoint}:5432/${var.db_name}"
+}
+
+module "api_ssm_parameters" {
+  source = "../../modules/ssm_parameters"
+
+  parameter_path_prefix = "/todolist/${var.environment}/api"
+
+  #String
+  string_parameters = var.string_parameters
+
+  #SecureString
+  securestring_parameters = {
+    SECRET_KEY   = var.api_secret_key
+    DATABASE_URL = local.database_url
+  }
+}
+
 
 
 # EC2 INSTANCE #
@@ -198,7 +222,7 @@ module "database_rds" {
 #       Project = var.project
 #     },
 #     var.tags,
-   
+
 #    )
 # }
 

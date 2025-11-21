@@ -1,5 +1,5 @@
 output "endpoint" {
-  value       = aws_db_instance.this.address
+  value       = aws_db_instance.this.endpoint
 }
 
 output "port" {

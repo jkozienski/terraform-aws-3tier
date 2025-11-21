@@ -16,12 +16,18 @@ resource "aws_security_group" "todolist_web" {
 }
 
 
-#Trzeba potem zmodyfikwoac
-resource "aws_vpc_security_group_ingress_rule" "todolist_web_from_alb" {
-  count = var.alb_sg_id == null ? 0 : 1
+# resource "aws_vpc_security_group_ingress_rule" "todolist_web_http_test" {
+#   security_group_id = aws_security_group.todolist_web.id
+#   cidr_ipv4         = "0.0.0.0/0"
 
+#   ip_protocol = "tcp"
+#   from_port   = 80
+#   to_port     = 80
+# }
+
+resource "aws_vpc_security_group_ingress_rule" "todolist_web_from_alb" {
   security_group_id            = aws_security_group.todolist_web.id
-  referenced_security_group_id = var.alb_sg_id
+  referenced_security_group_id = aws_security_group.alb.id
 
   ip_protocol = "tcp"
   from_port   = 80
@@ -159,7 +165,6 @@ resource "aws_security_group" "alb" {
     var.tags,
   )
 }
-
 
 
 #ZAKOMENTOWANE BO TESTUJE BEZ DNS

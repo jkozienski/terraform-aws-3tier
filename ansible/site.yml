@@ -1,0 +1,32 @@
+---
+
+- name: Prosty serwer httpd z IP
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Zainstaluj httpd
+      yum:
+        name: httpd
+        state: present
+
+    - name: Włącz i uruchom httpd
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: Pobierz lokalne IP instancji z metadanych
+      uri:
+        url: http://169.254.169.254/latest/meta-data/local-ipv4
+        return_content: yes
+      register: instance_ip
+
+    - name: Utwórz stronę index.html z IP
+      copy:
+        dest: /var/www/html/index.html
+        content: |
+          <h1>Adres IP instancji: {{ instance_ip.content }}</h1>
+        owner: apache
+        group: apache
+        mode: '0644'

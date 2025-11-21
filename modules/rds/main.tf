@@ -26,7 +26,7 @@ resource "aws_db_instance" "this" {
 
   allocated_storage      = var.allocated_storage
   max_allocated_storage  = var.max_allocated_storage
-  storage_type           = "gp3"
+  storage_type           = "gp2"
   storage_encrypted      = true
 
   db_subnet_group_name   = aws_db_subnet_group.this.name
@@ -35,7 +35,7 @@ resource "aws_db_instance" "this" {
   publicly_accessible = var.publicly_accessible
   multi_az            = var.multi_az
 
-  backup_retention_period = var.backup_retention_period
+  performance_insights_enabled = false
   skip_final_snapshot     = true            # dev = true, prod = false
   deletion_protection     = var.deletion_protection
 

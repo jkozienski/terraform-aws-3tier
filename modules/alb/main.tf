@@ -11,9 +11,11 @@ resource "aws_lb_target_group" "frontend" {
     enabled             = true
     interval            = 30
     timeout             = 5
-    path                = "/healthz"
+    path                = "/" #Konfig tlyko do testow
+    #path                = "/healthz" #Docelowy konfig
     protocol            = "HTTP"
-    matcher             = "200"
+    matcher             = "200-399" #Konfig tlyko do testow
+    #matcher             = "200" #Docelowy konfig
     healthy_threshold   = 3
     unhealthy_threshold = 3
   }
@@ -33,16 +35,30 @@ resource "aws_lb_target_group" "backend" {
   target_type = "instance"
   vpc_id      = var.vpc_id
 
-  health_check {
+    health_check {
     enabled             = true
     interval            = 30
     timeout             = 5
-    path                = "/health"
+    path                = "/" #Konfig tlyko do testow
+    #path                = "/healthz" #Docelowy konfig
     protocol            = "HTTP"
-    matcher             = "200-399" //Bo redirecty w pythonie 
+    matcher             = "200-399" #Konfig tlyko do testow
+    #matcher             = "200" #Docelowy konfig
     healthy_threshold   = 3
     unhealthy_threshold = 3
   }
+
+
+  # health_check {
+  #   enabled             = true
+  #   interval            = 30
+  #   timeout             = 5
+  #   path                = "/health"
+  #   protocol            = "HTTP"
+  #   matcher             = "200-399" //Bo redirecty w pythonie 
+  #   healthy_threshold   = 3
+  #   unhealthy_threshold = 3
+  # }
 
   tags = merge(
     {
