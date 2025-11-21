@@ -1,0 +1,65 @@
+---
+- name: Install nginx and git
+  apt:
+    name:
+      - nginx
+      - git
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Ensure nginx is running
+  systemd:
+    name: nginx
+    state: started
+    enabled: yes
+  become: yes
+
+- name: Create application directory
+  file:
+    path: /var/www/todolist
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: "0755"
+  become: yes
+
+- name: Deploy frontend from public app repository
+  git:
+    repo: "https://github.com/jkozienski/todolist-cloud-project.git"
+    dest: /var/www/todolist
+    version: main
+    force: yes
+  become: yes
+
+- name: Remove default nginx site if present
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  become: yes
+
+- name: Upload nginx virtual host configuration for frontend
+  template:
+    src: frontend.conf.j2
+    dest: /etc/nginx/sites-available/frontend.conf
+  become: yes
+
+- name: Enable frontend nginx site
+  file:
+    src: /etc/nginx/sites-available/frontend.conf
+    dest: /etc/nginx/sites-enabled/frontend.conf
+    state: link
+    force: true
+  become: yes
+
+- name: Test nginx configuration
+  command: nginx -t
+  register: nginx_test
+  changed_when: false
+  become: yes
+
+- name: Reload nginx
+  systemd:
+    name: nginx
+    state: reloaded
+  become: yes

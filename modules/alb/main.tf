@@ -11,11 +11,9 @@ resource "aws_lb_target_group" "frontend" {
     enabled             = true
     interval            = 30
     timeout             = 5
-    path                = "/" #Konfig tlyko do testow
-    #path                = "/healthz" #Docelowy konfig
+    path                = "/healthz" # Docelowy konfig
     protocol            = "HTTP"
-    matcher             = "200-399" #Konfig tlyko do testow
-    #matcher             = "200" #Docelowy konfig
+    matcher             = "200" # Docelowy konfig
     healthy_threshold   = 3
     unhealthy_threshold = 3
   }
@@ -39,11 +37,9 @@ resource "aws_lb_target_group" "backend" {
     enabled             = true
     interval            = 30
     timeout             = 5
-    path                = "/" #Konfig tlyko do testow
-    #path                = "/healthz" #Docelowy konfig
+    path                = "/health" 
     protocol            = "HTTP"
-    matcher             = "200-399" #Konfig tlyko do testow
-    #matcher             = "200" #Docelowy konfig
+    matcher             = "200-399" 
     healthy_threshold   = 3
     unhealthy_threshold = 3
   }

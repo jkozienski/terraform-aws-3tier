@@ -1,0 +1,34 @@
+server {
+    listen 80 default_server;
+    server_name _;
+
+    root /var/www/todolist;
+    index index.html;
+
+    # Health check endpoint for ALB
+    location = /healthz {
+        access_log off;
+        add_header Content-Type text/plain;
+        return 200 "ok\n";
+    }
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    # Example static assets location, adjust to your build structure
+    location /static/ {
+        alias /var/www/todolist/static/;
+        access_log off;
+        expires 30d;
+        add_header Cache-Control "public, max-age=2592000, immutable";
+        try_files $uri =404;
+    }
+
+    add_header X-Frame-Options "DENY" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    access_log /var/log/nginx/frontend.access.log;
+    error_log  /var/log/nginx/frontend.error.log warn;
+}
