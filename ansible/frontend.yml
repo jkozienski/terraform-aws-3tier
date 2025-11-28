@@ -1,7 +1,7 @@
 ---
-- name: Configure frontend on this instance
-  hosts: localhost
-  connection: local
+- name: Configure frontend on web instances
+  hosts: all
+  gather_facts: yes
   become: yes
 
   roles:

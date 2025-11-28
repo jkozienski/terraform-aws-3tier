@@ -1,4 +1,3 @@
----
 - name: Install nginx and git
   apt:
     name:
@@ -15,7 +14,13 @@
     enabled: yes
   become: yes
 
-- name: Create application directory
+- name: Remove previous frontend content
+  file:
+    path: /var/www/todolist
+    state: absent
+  become: yes
+
+- name: Create nginx root directory
   file:
     path: /var/www/todolist
     state: directory
@@ -24,21 +29,34 @@
     mode: "0755"
   become: yes
 
-- name: Deploy frontend from public app repository
+- name: Clone application repository
   git:
     repo: "https://github.com/jkozienski/todolist-cloud-project.git"
-    dest: /var/www/todolist
+    dest: /opt/todolist-app
     version: main
     force: yes
   become: yes
 
-- name: Remove default nginx site if present
+# UWAGA: kropka na końcu ścieżki src
+# Kopiuje ZAWARTOŚĆ katalogu frontend, a nie katalog frontend
+- name: Copy frontend content to nginx root
+  copy:
+    src: /opt/todolist-app/frontend/.
+    dest: /var/www/todolist/
+    remote_src: yes
+    owner: www-data
+    group: www-data
+    mode: "0644"
+    directory_mode: "0755"
+  become: yes
+
+- name: Remove default nginx site
   file:
     path: /etc/nginx/sites-enabled/default
     state: absent
   become: yes
 
-- name: Upload nginx virtual host configuration for frontend
+- name: Deploy nginx vhost
   template:
     src: frontend.conf.j2
     dest: /etc/nginx/sites-available/frontend.conf
@@ -62,4 +80,26 @@
   systemd:
     name: nginx
     state: reloaded
+  become: yes
+
+# Walidacja plików po deployu
+
+- name: Check required frontend files and directories
+  stat:
+    path: "{{ item }}"
+  loop:
+    - /var/www/todolist/index.html
+    - /var/www/todolist/login.html
+    - /var/www/todolist/register.html
+    - /var/www/todolist/css
+  register: frontend_files
+  become: yes
+
+- name: Fail if any required frontend file or directory is missing
+  fail:
+    msg: "Missing required frontend file or directory: {{ item.item }}"
+  when: not item.stat.exists
+  loop: "{{ frontend_files.results }}"
+  loop_control:
+    label: "{{ item.item }}"
   become: yes

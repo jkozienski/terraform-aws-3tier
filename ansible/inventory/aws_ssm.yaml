@@ -7,4 +7,4 @@ filters:
   tag:Project: todolist
   tag:Name: todolist-dev-web
 
-host_prefix: ssm
+host_prefix: ssm_

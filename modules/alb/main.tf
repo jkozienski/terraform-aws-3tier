@@ -11,9 +11,9 @@ resource "aws_lb_target_group" "frontend" {
     enabled             = true
     interval            = 30
     timeout             = 5
-    path                = "/healthz" # Docelowy konfig
+    path                = "/healthz" 
     protocol            = "HTTP"
-    matcher             = "200" # Docelowy konfig
+    matcher             = "200" 
     healthy_threshold   = 3
     unhealthy_threshold = 3
   }
@@ -43,18 +43,6 @@ resource "aws_lb_target_group" "backend" {
     healthy_threshold   = 3
     unhealthy_threshold = 3
   }
-
-
-  # health_check {
-  #   enabled             = true
-  #   interval            = 30
-  #   timeout             = 5
-  #   path                = "/health"
-  #   protocol            = "HTTP"
-  #   matcher             = "200-399" //Bo redirecty w pythonie 
-  #   healthy_threshold   = 3
-  #   unhealthy_threshold = 3
-  # }
 
   tags = merge(
     {

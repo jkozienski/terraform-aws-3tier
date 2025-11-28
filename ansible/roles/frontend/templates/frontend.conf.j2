@@ -12,22 +12,29 @@ server {
         return 200 "ok\n";
     }
 
+    #All static files
     location / {
         try_files $uri $uri/ =404;
     }
 
-    # Example static assets location, adjust to your build structure
-    location /static/ {
-        alias /var/www/todolist/static/;
-        access_log off;
-        expires 30d;
-        add_header Cache-Control "public, max-age=2592000, immutable";
-        try_files $uri =404;
+    location /css/ {
+       alias /var/www/todolist/css/;
+       access_log off;
+       expires 30d;
+       add_header Cache-Control "public, max-age=2592000, immutable";
+       try_files $uri =404;
     }
-
+ 
+    # Nagłówki bezpieczeństwa
     add_header X-Frame-Options "DENY" always;
     add_header X-Content-Type-Options "nosniff" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "geolocation=(), microphone=()" always;
+
+    # HSTS
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+
+    client_max_body_size 5m;
 
     access_log /var/log/nginx/frontend.access.log;
     error_log  /var/log/nginx/frontend.error.log warn;
