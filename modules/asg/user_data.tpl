@@ -12,4 +12,4 @@ git clone https://github.com/jkozienski/terraform-aws-3tier.git .
 
 cd ansible
 
-ansible-playbook -i localhost, -c local frontend.yml
+ansible-playbook frontend.yml -vv
