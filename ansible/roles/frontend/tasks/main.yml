@@ -37,8 +37,6 @@
     force: yes
   become: yes
 
-# UWAGA: kropka na końcu ścieżki src
-# Kopiuje ZAWARTOŚĆ katalogu frontend, a nie katalog frontend
 - name: Copy frontend content to nginx root
   copy:
     src: /opt/todolist-app/frontend/.
@@ -48,6 +46,15 @@
     group: www-data
     mode: "0644"
     directory_mode: "0755"
+  become: yes
+
+- name: Set permissions on /var/www/todolist
+  file:
+    path: /var/www/todolist
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: "0755"
   become: yes
 
 - name: Remove default nginx site
