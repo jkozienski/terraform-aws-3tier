@@ -1,0 +1,31 @@
+handlers:
+  - name: Fix backend permissions
+    block:
+
+      - name: Fix ownership of application directory
+        file:
+          path: "{{ app_dir }}"
+          state: directory
+          owner: root
+          group: www-data
+          recurse: yes
+
+      - name: Ensure base paths are executable
+        file:
+          path: "{{ item }}"
+          state: directory
+          mode: "0755"
+        loop:
+          - /srv
+          - "{{ app_dir }}"
+          - "{{ app_src_dir }}"
+          - "{{ app_dir }}/venv"
+          - "{{ app_dir }}/venv/bin"
+
+      - name: Fix .env permissions
+        file:
+          path: "{{ app_dir }}/.env"
+          state: file
+          owner: root
+          group: www-data
+          mode: "0640"

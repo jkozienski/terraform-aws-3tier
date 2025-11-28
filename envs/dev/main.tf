@@ -106,6 +106,11 @@ module "web_asg" {
   project     = var.project
   environment = var.environment
 
+    user_data = base64encode(
+    templatefile("../../modules/asg/user_data_web.tpl", {
+    })
+  )
+
   tags = {
     Project     = var.project
     Environment = var.environment
@@ -132,6 +137,11 @@ module "app_asg" {
 
   project     = var.project
   environment = var.environment
+
+  user_data = base64encode(
+    templatefile("../../modules/asg/user_data_app.tpl", {
+    })
+  )
 
   tags = {
     Project     = var.project

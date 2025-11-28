@@ -89,6 +89,7 @@
     state: reloaded
   become: yes
 
+#Logs and verification
 - name: Check required frontend files and directories
   stat:
     path: "{{ item }}"

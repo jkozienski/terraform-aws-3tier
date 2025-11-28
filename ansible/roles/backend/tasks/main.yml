@@ -1,0 +1,121 @@
+---
+- name: Load Django config from SSM Parameter Store
+  set_fact:
+    django_debug: "{{ lookup('amazon.aws.aws_ssm_parameter_store', ssm_prefix ~ '/DEBUG', region=aws_region) }}"
+    django_allowed_hosts: "{{ lookup('amazon.aws.aws_ssm_parameter_store', ssm_prefix ~ '/ALLOWED_HOSTS', region=aws_region) }}"
+    django_cors_allowed_origins: "{{ lookup('amazon.aws.aws_ssm_parameter_store', ssm_prefix ~ '/CORS_ALLOWED_ORIGINS', region=aws_region) }}"
+    django_csrf_trusted_origins: "{{ lookup('amazon.aws.aws_ssm_parameter_store', ssm_prefix ~ '/CSRF_TRUSTED_ORIGINS', region=aws_region) }}"
+    django_secret_key: "{{ lookup('amazon.aws.aws_ssm_parameter_store', ssm_prefix ~ '/SECRET_KEY', region=aws_region, decrypt=True) }}"
+    django_database_url: "{{ lookup('amazon.aws.aws_ssm_parameter_store', ssm_prefix ~ '/DATABASE_URL', region=aws_region, decrypt=True) }}"
+
+- name: Install backend system packages
+  apt:
+    name:
+      - python3-venv
+      - python3-pip
+      - git
+      - libpq-dev
+    state: present
+    update_cache: yes
+
+- name: Ensure application base directory exists
+  file:
+    path: "{{ app_dir }}"
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: "0755"
+
+- name: Clone application repository
+  git:
+    repo: "{{ repo_url }}"
+    dest: /opt/todolist-app
+    version: "{{ repo_version }}"
+    force: yes
+
+- name: Copy backend code to application src directory
+  copy:
+    src: /opt/todolist-app/backend/todolistApp/.
+    dest: "{{ app_src_dir }}/"
+    remote_src: yes
+  notify: Fix backend permissions
+
+- name: Create Python virtualenv
+  command: python3 -m venv venv
+  args:
+    chdir: "{{ app_dir }}"
+    creates: "{{ app_dir }}/venv/bin/activate"
+
+- name: Upgrade pip and wheel
+  command: "{{ app_dir }}/venv/bin/python -m pip install --upgrade pip wheel"
+  args:
+    chdir: "{{ app_dir }}"
+
+- name: Install backend requirements
+  command: "{{ app_dir }}/venv/bin/pip install -r {{ app_src_dir }}/requirements.txt"
+  args:
+    chdir: "{{ app_dir }}"
+
+- name: Ensure gunicorn is installed in venv
+  command: "{{ app_dir }}/venv/bin/pip install gunicorn"
+  args:
+    chdir: "{{ app_dir }}"
+
+- name: Render backend .env file
+  template:
+    src: backend.env.j2
+    dest: "{{ app_dir }}/.env"
+    owner: root
+    group: www-data
+    mode: "0640"
+  notify: Fix backend permissions
+
+- name: Create application log directory
+  file:
+    path: /var/log/todolist
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: "0750"
+
+- name: Ensure static root exists
+  file:
+    path: /var/www/static
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: "0755"
+
+- name: Deploy gunicorn systemd unit
+  template:
+    src: gunicorn.service.j2
+    dest: /etc/systemd/system/gunicorn.service
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Reload systemd units
+  systemd:
+    daemon_reload: true
+
+- name: Run Django migrations
+  become_user: www-data
+  shell: |
+    set -a
+    . {{ app_dir }}/.env
+    set +a
+    {{ app_dir }}/venv/bin/python {{ app_src_dir }}/manage.py migrate --noinput
+  args:
+    chdir: "{{ app_src_dir }}"
+
+- name: Enable and start gunicorn service
+  systemd:
+    name: gunicorn
+    enabled: true
+    state: started
+
+- name: Check gunicorn status
+  command: systemctl status gunicorn --no-pager
+  register: gunicorn_status
+  failed_when: false
+  changed_when: false

@@ -63,3 +63,8 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "user_data" {
+  type    = string
+  default = ""
+}

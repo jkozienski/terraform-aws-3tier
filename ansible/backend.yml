@@ -1,0 +1,20 @@
+---
+- name: Configure backend locally
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+  become: yes
+
+  vars:
+    app_dir: /srv/todolistapp
+    app_src_dir: "{{ app_dir }}/src"
+
+    repo_url: "https://github.com/jkozienski/todolist-cloud-project.git"
+    repo_version: "main"
+
+    aws_region: "us-east-1"
+    environment: "dev"
+    ssm_prefix: "/todolist/{{ environment }}/api"
+
+  roles:
+    - backend

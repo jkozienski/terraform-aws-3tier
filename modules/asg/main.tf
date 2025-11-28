@@ -1,18 +1,15 @@
 # Launch Template #
 
 resource "aws_launch_template" "this" {
-  name = "${var.name}-${var.environment}-lt"
-  #name_prefix   = var.name
+  name          = "${var.name}-${var.environment}-lt"
   image_id      = var.ami_id
   instance_type = var.instance_type
   key_name      = var.key_name
 
   vpc_security_group_ids = [var.sg_id]
 
-   user_data = base64encode(
-    templatefile("${path.module}/user_data.tpl", {
-    })
-  )
+  user_data = var.user_data
+
 
 
   # Opcjonalny IAM instance profile
