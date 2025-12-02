@@ -5,8 +5,8 @@ set -xe
 export app_env="${app_env}"
 export app_region="${app_region}"
 
-apt-get update -y
-apt-get install -y python3 python3-venv git ansible-core
+apt update -y
+apt install -y python3 python3-venv git ansible-core
 
 mkdir -p /opt/iac
 cd /opt/iac
