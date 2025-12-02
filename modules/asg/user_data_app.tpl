@@ -3,6 +3,7 @@ exec > /var/log/user-data-app.log 2>&1
 set -xe
 
 export app_env="${app_env}"
+export app_region="${app_region}"
 
 apt-get update -y
 apt-get install -y python3 python3-venv git ansible-core
@@ -18,3 +19,4 @@ ansible-galaxy collection install amazon.aws
 
 ansible-playbook backend.yml -i localhost, -c local \
   -e "app_env=${app_env}" \
+  -e "app_region=${app_region}"

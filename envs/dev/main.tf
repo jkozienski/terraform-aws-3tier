@@ -141,6 +141,7 @@ module "app_asg" {
   user_data = base64encode(
     templatefile("../../modules/asg/user_data_app.tpl", {
       app_env   = var.environment #pass environment to ansible playbook
+      app_region   = var.region  #pass environment to ansible playbook
     })
   )
 
