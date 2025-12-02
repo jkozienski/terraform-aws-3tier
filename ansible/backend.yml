@@ -12,8 +12,8 @@
     repo_url: "https://github.com/jkozienski/todolist-cloud-project.git"
     repo_version: "main"
 
-    aws_region: "{{ app_region }}"
-    ssm_prefix: "/todolist/{{ app_env }}/api"
+    aws_region: "us-east-1"
+    ssm_prefix: "/todolist/dev/api"
 
   roles:
     - backend
