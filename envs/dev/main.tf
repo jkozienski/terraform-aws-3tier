@@ -106,7 +106,7 @@ module "web_asg" {
   project     = var.project
   environment = var.environment
 
-    user_data = base64encode(
+  user_data = base64encode(
     templatefile("../../modules/asg/user_data_web.tpl", {
     })
   )
@@ -164,11 +164,11 @@ module "database_rds" {
   username = var.db_username
   password = var.db_password
 
-  instance_class          = var.instance_class
-  allocated_storage       = var.allocated_storage
-  max_allocated_storage   = var.max_allocated_storage
-  multi_az                = var.multi_az
-  deletion_protection     = var.deletion_protection
+  instance_class        = var.instance_class
+  allocated_storage     = var.allocated_storage
+  max_allocated_storage = var.max_allocated_storage
+  multi_az              = var.multi_az
+  deletion_protection   = var.deletion_protection
 
   tags = {
     Project     = var.project

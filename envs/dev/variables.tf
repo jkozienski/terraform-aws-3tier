@@ -79,8 +79,8 @@ variable "instance_class" {
   type = string
 }
 
- variable "allocated_storage" {
-  type = number 
+variable "allocated_storage" {
+  type = number
 }
 
 variable "max_allocated_storage" {
