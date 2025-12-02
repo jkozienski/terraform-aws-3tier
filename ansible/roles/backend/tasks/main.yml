@@ -4,7 +4,7 @@
     msg:
       - "ssm_prefix = {{ ssm_prefix }}"
       - "aws_region = {{ aws_region }}"
-      
+
 - name: Load Django config from SSM Parameter Store
   set_fact:
     django_debug: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/DEBUG', region=aws_region) }}"
