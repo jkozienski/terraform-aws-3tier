@@ -184,7 +184,10 @@ module "database_rds" {
 # SSM PARAMETERS #
 
 locals {
-  database_url = "postgres://${var.db_username}:${var.db_password}@${module.database_rds.endpoint}:5432/${var.db_name}"
+  db_user     = urlencode(var.db_username)
+  db_password = urlencode(var.db_password)
+
+  database_url = "postgres://${local.db_user}:${local.db_password}@${module.database_rds.endpoint}/${var.db_name}"
 }
 
 module "api_ssm_parameters" {
