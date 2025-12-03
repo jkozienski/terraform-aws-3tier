@@ -1,3 +1,7 @@
-output "app_fqdn" {
-  value = aws_route53_record.app.fqdn
+output "zone_id" {
+  value = aws_route53_zone.this.zone_id
+}
+
+output "name_servers" {
+  value = aws_route53_zone.this.name_servers
 }

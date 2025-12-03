@@ -36,29 +36,24 @@ module "iam" {
 }
 
 
-#ZAKOMENTOWANE BO TESTUJE BEZ DNS
-# Certificate ACM #
+#=============
+module "route53" {
+  source      = "../../modules/route53"
+  domain_name = var.domain_name
+
+  tags = {
+    Project     = var.project
+    Environment = var.environment
+  }
+}
+
 # module "acm" {
 #   source      = "../../modules/acm"
 #   domain_name = var.domain_name
+#   zone_id     = module.route53.zone_id
 
 #   tags = {
 #     Project     = var.project
-#     Environment = var.environment
-#     Name = "${var.project}-${var.environment}-acm"
-#   }
-# }
-
-# Route53 #
-# module "route53" {
-#   source = "../../modules/route53"
-
-#   domain_name  = var.domain_name
-#   alb_dns_name = module.alb.dns_name
-#   alb_zone_id  = module.alb.zone_id
-
-#   tags = {
-#     Project = var.project
 #     Environment = var.environment
 #   }
 # }

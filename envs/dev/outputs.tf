@@ -25,20 +25,12 @@ output "db_sg_id" {
   value = module.security.db_sg_id
 }
 
-# #EC2 WEB INSTANCE #
-# output "web_ec2_instance_id" {
-#   value = module.ec2_service.web_ec2_instance_id
-# }
-
-# #EC2 APP INSTANCE #
-# output "app_ec2_instance_id" {
-#   value = module.ec2_service.app_ec2_instance_id
-# }
-
-
-
 #TYLKO DO TESTOWANIA BEZ DNS
 output "alb_dns_name" {
   description = "Public DNS name Application Load Balancera"
   value       = module.alb.dns_name
+}
+output "nameservers" {
+  value = module.route53.name_servers
+  sensitive   = false
 }

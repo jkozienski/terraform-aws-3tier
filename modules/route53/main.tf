@@ -1,17 +1,10 @@
-# Automatyczne znalezienie Hosted Zone po nazwie domeny
-data "aws_route53_zone" "this" {
-  name         = var.domain_name
-  private_zone = false
-}
+resource "aws_route53_zone" "this" {
+  name = var.domain_name
 
-resource "aws_route53_record" "app" {
-  zone_id = data.aws_route53_zone.this.zone_id
-  name    = "app.${var.domain_name}"
-  type    = "A"
-
-  alias {
-    name                   = var.alb_dns_name
-    zone_id                = var.alb_zone_id
-    evaluate_target_health = true
-  }
+  tags = merge(
+    {
+      Name = var.domain_name
+    },
+    var.tags,
+  )
 }
