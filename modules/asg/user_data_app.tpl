@@ -1,11 +1,7 @@
-Content-Type: multipart/mixed; boundary="BOUNDARY"
-MIME-Version: 1.0
-
---BOUNDARY
-Content-Type: text/x-shellscript; charset="us-ascii"
 #!/bin/bash
-
 set -xe
+
+echo "[BACKEND] Starting user-data at $(date)" >> /var/log/user-data-app.log
 
 export app_env="${app_env}"
 export app_region="${app_region}"
@@ -27,5 +23,3 @@ ansible-playbook backend.yml -i localhost, -c local \
   -e "source_repo_url=${source_repo_url}" >> /var/log/user-data-app.log 2>&1
 
 echo "[BACKEND] User-data finished at $(date)" >> /var/log/user-data-app.log
-
---BOUNDARY--
