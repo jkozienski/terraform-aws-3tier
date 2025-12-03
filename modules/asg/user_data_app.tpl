@@ -6,8 +6,8 @@ export app_env="${app_env}"
 export app_region="${app_region}"
 
 apt update -y
-apt install -y python3 python3-venv git 
-pip install ansible
+apt install -y python3 python3-venv python3-pip git ansible-core
+#pip install ansible
 
 mkdir -p /opt/iac
 cd /opt/iac

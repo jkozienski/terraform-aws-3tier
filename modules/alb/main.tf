@@ -119,8 +119,6 @@ resource "aws_lb_listener" "http" {
 resource "aws_lb_listener_rule" "backend_path" {
   listener_arn = aws_lb_listener.http.arn
   priority     = 10
-  port = 8000
-  protocol = "HTTP"
   
   action {
     type             = "forward"
