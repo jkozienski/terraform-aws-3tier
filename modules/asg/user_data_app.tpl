@@ -12,7 +12,7 @@ apt update -y >> /var/log/user-data-app.log 2>&1
 apt install -y python3 python3-venv python3-pip git ansible-core >> /var/log/user-data-app.log 2>&1
 
 mkdir -p /opt/iac
-git clone https://github.com/jkozienski/terraform-aws-3tier.git /opt/iac >> /var/log/user-data-app.log 2>&1
+git clone "${source_repo_url}" /opt/iac >> /var/log/user-data-app.log 2>&1
 
 cd /opt/iac/ansible
 

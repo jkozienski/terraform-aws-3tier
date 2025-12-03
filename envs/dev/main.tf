@@ -108,6 +108,7 @@ module "web_asg" {
 
   user_data = base64encode(
     templatefile("../../modules/asg/user_data_web.tpl", {
+      source_repo_url = var.source_repo_url
     })
   )
 

@@ -1,3 +1,4 @@
+---
 - name: Install nginx and git
   apt:
     name:
@@ -16,31 +17,31 @@
 
 - name: Remove previous frontend content
   file:
-    path: /var/www/todolist
+    path: "{{ frontend_dir }}"
     state: absent
   become: yes
 
 - name: Create nginx root directory
   file:
-    path: /var/www/todolist
+    path: "{{ frontend_dir }}"
     state: directory
     owner: www-data
     group: www-data
     mode: "0755"
   become: yes
 
-- name: Clone application repository
+- name: Clone application repository (frontend+backend mono-repo)
   git:
-    repo: "https://github.com/jkozienski/todolist-cloud-project.git"
-    dest: /opt/todolist-app
+    repo: "{{ source_repo_url }}"
+    dest: "{{ repo_checkout_dir }}"
     version: main
     force: yes
   become: yes
 
-- name: Copy frontend content to nginx root
+- name: Copy frontend files to nginx root
   copy:
-    src: /opt/todolist-app/frontend/.
-    dest: /var/www/todolist/
+    src: "{{ repo_checkout_dir }}/frontend/."
+    dest: "{{ frontend_dir }}/"
     remote_src: yes
     owner: www-data
     group: www-data
@@ -48,9 +49,9 @@
     directory_mode: "0755"
   become: yes
 
-- name: Set permissions on /var/www/todolist
+- name: Ensure permissions on frontend directory
   file:
-    path: /var/www/todolist
+    path: "{{ frontend_dir }}"
     state: directory
     owner: www-data
     group: www-data
@@ -89,15 +90,15 @@
     state: reloaded
   become: yes
 
-#Logs and verification
+# Verification
 - name: Check required frontend files and directories
   stat:
     path: "{{ item }}"
   loop:
-    - /var/www/todolist/index.html
-    - /var/www/todolist/login.html
-    - /var/www/todolist/register.html
-    - /var/www/todolist/css
+    - "{{ frontend_dir }}/index.html"
+    - "{{ frontend_dir }}/login.html"
+    - "{{ frontend_dir }}/register.html"
+    - "{{ frontend_dir }}/styles.css"
   register: frontend_files
   become: yes
 
