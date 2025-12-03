@@ -6,6 +6,7 @@
   become: yes
 
   vars:
+    ansible_python_interpreter: /usr/bin/python3
     app_dir: /srv/todolistapp
     app_src_dir: "{{ app_dir }}/src"
 

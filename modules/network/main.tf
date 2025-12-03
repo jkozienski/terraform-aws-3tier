@@ -11,7 +11,7 @@ resource "aws_vpc" "this" {
 
   tags = merge(
     {
-      Name        = "${var.environment}-vpc"
+      Name        = "todolist-${var.environment}-vpc"
       Environment = var.environment
     },
     var.tags,
@@ -61,7 +61,7 @@ resource "aws_internet_gateway" "this" {
 
   tags = merge(
     {
-      Name        = "${var.environment}-internet-gateway"
+      Name        = "${var.environment}-igw"
       Environment = var.environment
     },
     var.tags,

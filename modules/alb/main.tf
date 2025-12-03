@@ -107,6 +107,8 @@ resource "aws_lb" "this" {
 # Listener HTTP: 80 -> frontend TG
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.this.arn
+  port        = 80
+  protocol    = "HTTP"
 
   default_action {
     type             = "forward"
@@ -117,7 +119,9 @@ resource "aws_lb_listener" "http" {
 resource "aws_lb_listener_rule" "backend_path" {
   listener_arn = aws_lb_listener.http.arn
   priority     = 10
-
+  port = 8000
+  protocol = "HTTP"
+  
   action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.backend.arn
