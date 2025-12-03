@@ -15,9 +15,7 @@ git clone "${source_repo_url}" /opt/iac
 cd /opt/iac/ansible
 
 ansible-playbook frontend.yml -i localhost, -c local \
-  -e "infra_repo_url=${infra_repo_url}" \
-  -e "source_repo_url=${source_repo_url}"
-
+  -e "source_repo_url=${source_repo_url}" \
+  -e "infra_repo_url=${infra_repo_url}"
 
 echo "[FRONTEND] User-data finished at $(date)" >> /var/log/user-data.log
-
