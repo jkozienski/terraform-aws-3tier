@@ -142,6 +142,7 @@ module "app_asg" {
     templatefile("../../modules/asg/user_data_app.tpl", {
       app_env   = var.environment #pass environment to ansible playbook
       app_region   = var.region  #pass environment to ansible playbook
+      ssm_prefix = "/todolist/${var.environment}/api"
     })
   )
 

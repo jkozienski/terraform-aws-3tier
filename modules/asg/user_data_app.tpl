@@ -9,6 +9,7 @@ set -xe
 
 export app_env="${app_env}"
 export app_region="${app_region}"
+export ssm_prefix="${ssm_prefix}"
 
 apt update -y >> /var/log/user-data-app.log 2>&1
 apt install -y python3 python3-venv python3-pip git ansible-core >> /var/log/user-data-app.log 2>&1
@@ -20,7 +21,8 @@ cd /opt/iac/ansible
 
 ansible-playbook backend.yml -i localhost, -c local \
   -e "app_env=${app_env}" \
-  -e "app_region=${app_region}" >> /var/log/user-data-app.log 2>&1
+  -e "aws_region=${app_region}" \
+  -e "ssm_prefix=${ssm_prefix}" >> /var/log/user-data-app.log 2>&1
 
 echo "[BACKEND] User-data finished at $(date)" >> /var/log/user-data-app.log
 
