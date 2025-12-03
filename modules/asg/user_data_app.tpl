@@ -1,34 +1,34 @@
+Content-Type: multipart/mixed; boundary="===============BOUNDARY=="
+MIME-Version: 1.0
+
+--===============BOUNDARY==
+Content-Type: text/x-shellscript; charset="us-ascii"
+
 #!/bin/bash
-exec > /var/log/user-data-app.log 2>&1
+
 set -xe
 
-# full PATH for cloud-init
-export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-
-# values injected from Terraform
+# Environment variables
 export app_env="${app_env}"
 export app_region="${app_region}"
 
-# wait for apt locks
-sleep 20
+echo "[BACKEND] User-data started at $(date)" > /var/log/user-data-app.log
 
-apt update -y
-apt install -y python3 python3-venv python3-pip git ansible-core unzip
+# Install packages
+apt update -y >> /var/log/user-data-app.log 2>&1
+apt install -y python3 python3-venv python3-pip git ansible-core >> /var/log/user-data-app.log 2>&1
 
-# prepare directory
-rm -rf /opt/iac
+# Clone repo
 mkdir -p /opt/iac
-cd /opt/iac
+git clone https://github.com/jkozienski/terraform-aws-3tier.git /opt/iac >> /var/log/user-data-app.log 2>&1
 
-# clone repo fresh
-git clone https://github.com/jkozienski/terraform-aws-3tier.git .
+cd /opt/iac/ansible
 
-cd ansible
-
-# install aws modules only if needed
-# ansible-galaxy collection install amazon.aws
-
-# run playbook
+# Run Ansible
 ansible-playbook backend.yml -i localhost, -c local \
   -e "app_env=${app_env}" \
-  -e "app_region=${app_region}"
+  -e "app_region=${app_region}" >> /var/log/user-data-app.log 2>&1
+
+echo "[BACKEND] User-data finished at $(date)" >> /var/log/user-data-app.log
+
+--===============BOUNDARY==--
