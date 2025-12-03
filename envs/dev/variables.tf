@@ -61,6 +61,11 @@ variable "source_repo_url" {
   type        = string
 }
 
+variable "infra_repo_url" {
+  description = "Git repository containing terraform and ansible code for infrastructure setup"
+  type        = string
+}
+
 
 
 
