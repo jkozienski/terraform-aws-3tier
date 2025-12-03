@@ -143,6 +143,7 @@ module "app_asg" {
       app_env   = var.environment #pass environment to ansible playbook
       app_region   = var.region  #pass environment to ansible playbook
       ssm_prefix = "/todolist/${var.environment}/api"
+      source_repo_url = var.source_repo_url
     })
   )
 

@@ -56,7 +56,10 @@ variable "instance_profile_arn" {
   default = null
 }
 
-
+variable "source_repo_url" {
+  description = "Git repository containing full application (frontend + backend)"
+  type        = string
+}
 
 
 

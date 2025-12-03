@@ -10,9 +10,9 @@
     app_dir: /srv/todolistapp
     app_src_dir: "{{ app_dir }}/src"
 
-    repo_url: "https://github.com/jkozienski/todolist-cloud-project.git"
+  
     repo_version: "main"
-
+    source_repo_url: "{{ source_repo_url }}"
     aws_region: "{{ aws_region }}"
     ssm_prefix: "{{ ssm_prefix }}"
 
