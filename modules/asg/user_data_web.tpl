@@ -10,7 +10,7 @@ apt-get install -y python3 python3-pip git ansible
 
 mkdir -p /opt/iac
 
-git clone "${source_repo_url}" /opt/iac
+git clone "https://github.com/jkozienski/terraform-aws-3tier.git" /opt/iac
 
 cd /opt/iac/ansible
 
