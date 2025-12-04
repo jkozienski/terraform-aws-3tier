@@ -7,6 +7,14 @@ resource "aws_acm_certificate" "this" {
 
   validation_method = "DNS"
 
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes = [
+      validation_method,
+      subject_alternative_names,
+    ]
+  }
+
   tags = merge(
     {
       Name = var.domain_name
@@ -36,4 +44,8 @@ resource "aws_acm_certificate_validation" "this" {
     for record in aws_route53_record.cert_validation :
     record.fqdn
   ]
+  
+  lifecycle {
+    ignore_changes = all
+  }
 }
