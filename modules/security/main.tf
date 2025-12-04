@@ -161,7 +161,7 @@ resource "aws_vpc_security_group_egress_rule" "todolist_db_all" {
 }
 
 
-#ALB
+# ALB #
 resource "aws_security_group" "alb" {
   name        = "alb-security-group"
   description = "Security group for todolist load balancer"
@@ -176,18 +176,22 @@ resource "aws_security_group" "alb" {
   )
 }
 
-
-#ZAKOMENTOWANE BO TESTUJE BEZ DNS
-#resource "aws_vpc_security_group_ingress_rule" "alb_https_from_internet" {
+# HTTP
 resource "aws_vpc_security_group_ingress_rule" "alb_http_from_internet" {
   security_group_id = aws_security_group.alb.id
   cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "tcp"
+  from_port         = 80
+  to_port           = 80
+}
 
-  ip_protocol = "tcp"
-  #from_port   = 443
-  #to_port     = 443
-  from_port   = 80
-  to_port     = 80
+# HTTPS
+resource "aws_vpc_security_group_ingress_rule" "alb_https_from_internet" {
+  security_group_id = aws_security_group.alb.id
+  cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "tcp"
+  from_port         = 443
+  to_port           = 443
 }
 
 resource "aws_vpc_security_group_egress_rule" "alb_all" {

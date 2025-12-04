@@ -39,7 +39,10 @@ module "iam" {
 #=============
 module "route53" {
   source      = "../../modules/route53"
-  domain_name = var.domain_name
+
+  domain_name  = var.domain_name
+  alb_dns_name = module.alb.dns_name
+  alb_zone_id  = module.alb.zone_id
 
   tags = {
     Project     = var.project
@@ -47,16 +50,16 @@ module "route53" {
   }
 }
 
-# module "acm" {
-#   source      = "../../modules/acm"
-#   domain_name = var.domain_name
-#   zone_id     = module.route53.zone_id
+module "acm" {
+  source      = "../../modules/acm"
+  domain_name = var.domain_name
+  zone_id     = module.route53.zone_id
 
-#   tags = {
-#     Project     = var.project
-#     Environment = var.environment
-#   }
-# }
+  tags = {
+    Project     = var.project
+    Environment = var.environment
+  }
+}
 
 
 # Load  Balancer #
@@ -68,7 +71,7 @@ module "alb" {
 
   project     = var.project
   environment = var.environment
-  #acm_certificate_arn = module.acm.certificate_arn
+  acm_certificate_arn = module.acm.certificate_arn
 
   alb_sg_id = module.security.alb_sg_id
 
