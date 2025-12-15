@@ -2,7 +2,7 @@ server {
     listen 80 default_server;
     server_name _;
 
-    root /var/www/{{ app_name }};
+    root /var/www/{{app_name}};
     index index.html;
 
     # Health check endpoint for ALB
