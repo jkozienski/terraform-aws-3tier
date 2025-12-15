@@ -8,6 +8,8 @@
     backend_secret_key: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/SECRET_KEY', region=aws_region, decrypt=True) }}"
     backend_database_url: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/DATABASE_URL', region=aws_region, decrypt=True) }}"
     backend_app: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/BACKEND_APP', region=aws_region) }}"
+    app_name: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/APP_NAME', region=aws_region) }}"
+    backend_repo_dir: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/BACKEND_REPO_DIR', region=aws_region) }}"
 
 - name: Install backend system packages
   apt:
@@ -31,7 +33,7 @@
 - name: Clone application repository
   git:
     repo: "{{ source_repo_url }}"
-    dest: /opt/todolist-app
+    dest: /opt/{{ app_name }}
     version: "{{ repo_version }}"
     force: yes
 
@@ -45,7 +47,7 @@
 
 - name: Copy backend code to application src directory
   copy:
-    src: /opt/todolist-app/backend/todolistApp/.
+    src: /opt/{{ app_name }}/{{ backend_repo_dir }}/.
     dest: "{{ app_src_dir }}/"
     remote_src: yes
   notify: Fix backend permissions
@@ -82,7 +84,7 @@
 
 - name: Create application log directory
   file:
-    path: /var/log/todolist
+    path: /var/log/{{ app_name }}
     state: directory
     owner: www-data
     group: www-data

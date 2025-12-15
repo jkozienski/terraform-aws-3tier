@@ -1,5 +1,5 @@
 [Unit]
-Description=Gunicorn ToDoList
+Description=Gunicorn {{ app_name }} Service
 After=network-online.target
 Wants=network-online.target
 
@@ -7,12 +7,12 @@ Wants=network-online.target
 Type=simple
 User=www-data
 Group=www-data
-WorkingDirectory=/srv/todolistapp/src
+WorkingDirectory=/srv/{{ app_name }}/src
 
-EnvironmentFile=/srv/todolistapp/.env
+EnvironmentFile=/srv/{{ app_name }}/.env
 Environment=PYTHONUNBUFFERED=1
 
-ExecStart=/srv/todolistapp/venv/bin/gunicorn {{ backend_app }} \
+ExecStart=/srv/{{ app_name }}/venv/bin/gunicorn {{ backend_app }} \
   --bind 0.0.0.0:8000 \
   --workers 3 \
   --worker-tmp-dir /dev/shm \
@@ -52,7 +52,7 @@ RestrictNamespaces=true
 RestrictRealtime=true
 RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 
-ReadWritePaths=/srv/todolistapp /var/log
+ReadWritePaths=/srv/{{ app_name }} /var/log
 
 [Install]
 WantedBy=multi-user.target

@@ -191,6 +191,7 @@ locals {
   db_password = urlencode(var.db_password)
 
   database_url = "postgres://${local.db_user}:${local.db_password}@${module.database_rds.endpoint}/${var.db_name}"
+
 }
 
 module "api_ssm_parameters" {
