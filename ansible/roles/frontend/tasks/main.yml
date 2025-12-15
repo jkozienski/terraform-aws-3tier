@@ -1,8 +1,4 @@
 ---
-- name: Load backend config from SSM Parameter Store
-  set fact:
-    app_name: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/APP_NAME', region=aws_region) }}"
-
 - name: Install nginx and git
   apt:
     name:

@@ -2,7 +2,7 @@ server {
     listen 80 default_server;
     server_name _;
 
-    root /var/www/{{app_name}};
+    root /var/www/todolist;
     index index.html;
 
     # Health check endpoint for ALB
@@ -18,7 +18,7 @@ server {
     }
 
     location /css/ {
-       alias /var/www/{{ app_name }}/css/;
+       alias /var/www/todolist/css/;
        access_log off;
        expires 30d;
        add_header Cache-Control "public, max-age=2592000, immutable";
@@ -36,6 +36,6 @@ server {
 
     client_max_body_size 5m;
 
-    access_log /var/log/nginx/{{ app_name }}.access.log;
-    error_log  /var/log/nginx/{{ app_name }}error.log warn;
+    access_log /var/log/nginx/frontend.access.log;
+    error_log  /var/log/nginx/frontend.error.log warn;
 }
