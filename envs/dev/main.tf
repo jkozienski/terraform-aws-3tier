@@ -1,4 +1,4 @@
-# Network: VPC, Subnets, IGW, NAT, Route Tables#
+# Network: VPC, Subnets, IGW, NAT, Route Tables #
 module "network" {
   source         = "../../modules/network"
   environment    = var.environment
@@ -142,7 +142,7 @@ module "app_asg" {
     templatefile("../../modules/asg/user_data_app.tpl", {
       app_env   = var.environment #pass environment to ansible playbook
       app_region   = var.region  #pass environment to ansible playbook
-      ssm_prefix = "/todolist/${var.environment}/api"
+      ssm_prefix = "/${var.project}/${var.environment}/api"
       source_repo_url = var.source_repo_url
       infra_repo_url = var.infra_repo_url
     })
@@ -196,7 +196,7 @@ locals {
 module "api_ssm_parameters" {
   source = "../../modules/ssm_parameters"
 
-  parameter_path_prefix = "/todolist/${var.environment}/api"
+  parameter_path_prefix = "/${var.project}/${var.environment}/api"
 
   #String
   string_parameters = var.string_parameters

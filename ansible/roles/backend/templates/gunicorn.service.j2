@@ -12,7 +12,7 @@ WorkingDirectory=/srv/todolistapp/src
 EnvironmentFile=/srv/todolistapp/.env
 Environment=PYTHONUNBUFFERED=1
 
-ExecStart=/srv/todolistapp/venv/bin/gunicorn todolistApp.wsgi:application \
+ExecStart=/srv/todolistapp/venv/bin/gunicorn {{ backend_app }} \
   --bind 0.0.0.0:8000 \
   --workers 3 \
   --worker-tmp-dir /dev/shm \

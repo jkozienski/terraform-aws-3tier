@@ -1,12 +1,13 @@
 ---
-- name: Load Django config from SSM Parameter Store
+- name: Load backend config from SSM Parameter Store
   set_fact:
-    django_debug: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/DEBUG', region=aws_region) }}"
-    django_allowed_hosts: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/ALLOWED_HOSTS', region=aws_region) }}"
-    django_cors_allowed_origins: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/CORS_ALLOWED_ORIGINS', region=aws_region) }}"
-    django_csrf_trusted_origins: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/CSRF_TRUSTED_ORIGINS', region=aws_region) }}"
-    django_secret_key: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/SECRET_KEY', region=aws_region, decrypt=True) }}"
-    django_database_url: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/DATABASE_URL', region=aws_region, decrypt=True) }}"
+    backend_debug: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/DEBUG', region=aws_region) }}"
+    backend_allowed_hosts: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/ALLOWED_HOSTS', region=aws_region) }}"
+    backend_cors_allowed_origins: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/CORS_ALLOWED_ORIGINS', region=aws_region) }}"
+    backend_csrf_trusted_origins: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/CSRF_TRUSTED_ORIGINS', region=aws_region) }}"
+    backend_secret_key: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/SECRET_KEY', region=aws_region, decrypt=True) }}"
+    backend_database_url: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/DATABASE_URL', region=aws_region, decrypt=True) }}"
+    backend_app: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/BACKEND_APP', region=aws_region) }}"
 
 - name: Install backend system packages
   apt:
