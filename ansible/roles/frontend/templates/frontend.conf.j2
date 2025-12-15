@@ -2,7 +2,7 @@ server {
     listen 80 default_server;
     server_name _;
 
-    root /var/www/todolist;
+    root /var/www/webapp;
     index index.html;
 
     # Health check endpoint for ALB
@@ -18,7 +18,7 @@ server {
     }
 
     location /css/ {
-       alias /var/www/todolist/css/;
+       alias /var/www/webapp/css/;
        access_log off;
        expires 30d;
        add_header Cache-Control "public, max-age=2592000, immutable";

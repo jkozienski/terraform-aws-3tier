@@ -8,8 +8,8 @@
   vars:
     ansible_python_interpreter: /usr/bin/python3
     source_repo_url: "{{ source_repo_url }}"
-    frontend_dir: /var/www/todolist
-    repo_checkout_dir: /opt/todolist-app
+    frontend_dir: /var/www/webapp
+    repo_checkout_dir: /opt/web-app
 
   roles:
     - frontend
