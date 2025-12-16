@@ -25,6 +25,12 @@ variable "domain_name" {
   type = string
 }
 
+variable "show_nameservers" {
+  description = "Show nameservers before deploy architecture."
+  type        = bool
+  default     = false
+}
+
 
 # ASG VARIABLES #
 variable "key_name" {
@@ -164,5 +170,4 @@ variable "tags" {
 # variable "instance_profile_arn" {
 #   type        = string
 # }
-
 

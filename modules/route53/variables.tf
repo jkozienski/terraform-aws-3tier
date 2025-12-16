@@ -3,11 +3,18 @@ variable "domain_name" {
 }
 
 variable "alb_dns_name" {
-  type = string
+  type    = string
+  default = null
 }
 
 variable "alb_zone_id" {
-  type = string
+  type    = string
+  default = null
+}
+
+variable "create_alias_records" {
+  type    = bool
+  default = true
 }
 
 variable "tags" {

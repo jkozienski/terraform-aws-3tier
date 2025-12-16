@@ -1,5 +1,16 @@
+locals {
+  deploy_full_stack = !var.show_nameservers
+
+  db_user     = urlencode(var.db_username)
+  db_password = urlencode(var.db_password)
+  database_url = local.deploy_full_stack ? "postgres://${local.db_user}:${local.db_password}@${module.database_rds[0].endpoint}/${var.db_name}" : null
+
+}
+
 # Network: VPC, Subnets, IGW, NAT, Route Tables #
 module "network" {
+  count = local.deploy_full_stack ? 1 : 0
+
   source         = "../../modules/network"
   environment    = var.environment
   cidr_block     = var.cidr_block
@@ -14,9 +25,11 @@ module "network" {
 
 # SECURITY GROUPS #
 module "security" {
+  count = local.deploy_full_stack ? 1 : 0
+
   source      = "../../modules/security"
   environment = var.environment
-  vpc_id      = module.network.vpc_id
+  vpc_id      = local.deploy_full_stack ? module.network[0].vpc_id : null
 
   tags = {
     Project = var.project
@@ -25,6 +38,8 @@ module "security" {
 
 # IAM #
 module "iam" {
+  count = local.deploy_full_stack ? 1 : 0
+
   source      = "../../modules/iam"
   project     = var.project
   environment = var.environment
@@ -40,9 +55,10 @@ module "iam" {
 module "route53" {
   source      = "../../modules/route53"
 
-  domain_name  = var.domain_name
-  alb_dns_name = module.alb.dns_name
-  alb_zone_id  = module.alb.zone_id
+  domain_name          = var.domain_name
+  alb_dns_name         = local.deploy_full_stack ? module.alb[0].dns_name : null
+  alb_zone_id          = local.deploy_full_stack ? module.alb[0].zone_id : null
+  create_alias_records = local.deploy_full_stack
 
   tags = {
     Project     = var.project
@@ -51,6 +67,8 @@ module "route53" {
 }
 
 module "acm" {
+  count = local.deploy_full_stack ? 1 : 0
+
   source      = "../../modules/acm"
   domain_name = var.domain_name
   zone_id     = module.route53.zone_id
@@ -64,16 +82,18 @@ module "acm" {
 
 # Load  Balancer #
 module "alb" {
+  count = local.deploy_full_stack ? 1 : 0
+
   source = "../../modules/alb"
 
-  vpc_id            = module.network.vpc_id
-  public_subnet_ids = module.network.subnet_public_id
+  vpc_id            = local.deploy_full_stack ? module.network[0].vpc_id : null
+  public_subnet_ids = local.deploy_full_stack ? module.network[0].subnet_public_id : null
 
   project     = var.project
   environment = var.environment
-  acm_certificate_arn = module.acm.certificate_arn
+  acm_certificate_arn = local.deploy_full_stack ? module.acm[0].certificate_arn : null
 
-  alb_sg_id = module.security.alb_sg_id
+  alb_sg_id = local.deploy_full_stack ? module.security[0].alb_sg_id : null
 
   tags = {
     Project     = var.project
@@ -86,6 +106,8 @@ module "alb" {
 
 # ASG #
 module "web_asg" {
+  count = local.deploy_full_stack ? 1 : 0
+
   source = "../../modules/asg"
 
   name             = "${var.project}-${var.environment}-web"
@@ -94,12 +116,12 @@ module "web_asg" {
   key_name         = var.key_name
   root_volume_size = var.root_volume_size
 
-  sg_id      = module.security.web_sg_id
-  subnet_ids = module.network.subnet_public_id
+  sg_id      = local.deploy_full_stack ? module.security[0].web_sg_id : null
+  subnet_ids = local.deploy_full_stack ? module.network[0].subnet_public_id : null
 
-  target_group_arns = [module.alb.frontend_tg_arn]
+  target_group_arns = local.deploy_full_stack ? [module.alb[0].frontend_tg_arn] : []
 
-  instance_profile_arn = module.iam.instance_profile_arn
+  instance_profile_arn = local.deploy_full_stack ? module.iam[0].instance_profile_arn : null
 
   project     = var.project
   environment = var.environment
@@ -120,6 +142,8 @@ module "web_asg" {
 
 
 module "app_asg" {
+  count = local.deploy_full_stack ? 1 : 0
+
   source = "../../modules/asg"
 
   name             = "${var.project}-${var.environment}-app"
@@ -128,12 +152,12 @@ module "app_asg" {
   key_name         = var.key_name
   root_volume_size = var.root_volume_size
 
-  sg_id      = module.security.app_sg_id
-  subnet_ids = module.network.subnet_private_id
+  sg_id      = local.deploy_full_stack ? module.security[0].app_sg_id : null
+  subnet_ids = local.deploy_full_stack ? module.network[0].subnet_private_id : null
 
-  target_group_arns = [module.alb.backend_tg_arn]
+  target_group_arns = local.deploy_full_stack ? [module.alb[0].backend_tg_arn] : []
 
-  instance_profile_arn = module.iam.instance_profile_arn
+  instance_profile_arn = local.deploy_full_stack ? module.iam[0].instance_profile_arn : null
 
   project     = var.project
   environment = var.environment
@@ -157,13 +181,15 @@ module "app_asg" {
 
 # RDS #
 module "database_rds" {
+  count = local.deploy_full_stack ? 1 : 0
+
   source = "../../modules/rds"
 
   project     = var.project
   environment = var.environment
 
-  subnet_ids = module.network.subnet_private_id
-  db_sg_id   = module.security.db_sg_id
+  subnet_ids = local.deploy_full_stack ? module.network[0].subnet_private_id : null
+  db_sg_id   = local.deploy_full_stack ? module.security[0].db_sg_id : null
 
   db_name  = var.db_name
   username = var.db_username
@@ -186,15 +212,9 @@ module "database_rds" {
 
 # SSM PARAMETERS #
 
-locals {
-  db_user     = urlencode(var.db_username)
-  db_password = urlencode(var.db_password)
-
-  database_url = "postgres://${local.db_user}:${local.db_password}@${module.database_rds.endpoint}/${var.db_name}"
-
-}
-
 module "api_ssm_parameters" {
+  count = local.deploy_full_stack ? 1 : 0
+
   source = "../../modules/ssm_parameters"
 
   parameter_path_prefix = "/${var.project}/${var.environment}/api"
@@ -244,4 +264,3 @@ module "api_ssm_parameters" {
 
 #    )
 # }
-

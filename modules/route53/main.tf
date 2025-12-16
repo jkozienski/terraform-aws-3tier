@@ -11,6 +11,8 @@ resource "aws_route53_zone" "this" {
 
 # kozkowsky.space -> ALB
 resource "aws_route53_record" "root_domain" {
+  count = var.create_alias_records ? 1 : 0
+
   zone_id = aws_route53_zone.this.zone_id
   name    = var.domain_name
   type    = "A"
@@ -24,6 +26,8 @@ resource "aws_route53_record" "root_domain" {
 
 # www.kozkowsky.space -> ALB
 resource "aws_route53_record" "www_domain" {
+  count = var.create_alias_records ? 1 : 0
+
   zone_id = aws_route53_zone.this.zone_id
   name    = "www.${var.domain_name}"
   type    = "A"
