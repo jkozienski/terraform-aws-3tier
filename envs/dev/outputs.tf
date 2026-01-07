@@ -3,12 +3,20 @@ output "vpc_id" {
   value = local.deploy_full_stack ? module.network[0].vpc_id : null
 }
 
-output "subnet_public_id" {
-  value = local.deploy_full_stack ? module.network[0].subnet_public_id : null
+output "alb_subnet_ids" {
+  value = local.deploy_full_stack ? module.network[0].alb_subnet_ids : null
 }
 
-output "subnet_private_id" {
-  value = local.deploy_full_stack ? module.network[0].subnet_private_id : null
+output "frontend_subnet_ids" {
+  value = local.deploy_full_stack ? module.network[0].frontend_subnet_ids : null
+}
+
+output "backend_subnet_ids" {
+  value = local.deploy_full_stack ? module.network[0].backend_subnet_ids : null
+}
+
+output "db_subnet_ids" {
+  value = local.deploy_full_stack ? module.network[0].db_subnet_ids : null
 }
 
 

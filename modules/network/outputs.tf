@@ -3,10 +3,18 @@ output "vpc_id" {
   value       = aws_vpc.this.id
 }
 
-output "subnet_public_id" {
-  value       = aws_subnet.public[*].id
+output "alb_subnet_ids" {
+  value = aws_subnet.alb_public[*].id
 }
 
-output "subnet_private_id" {
-  value       = aws_subnet.private[*].id
+output "frontend_subnet_ids" {
+  value = aws_subnet.frontend[*].id
+}
+
+output "backend_subnet_ids" {
+  value = aws_subnet.backend[*].id
+}
+
+output "db_subnet_ids" {
+  value = aws_subnet.db[*].id
 }

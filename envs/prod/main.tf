@@ -12,11 +12,13 @@ locals {
 module "network" {
   count = local.deploy_full_stack ? 1 : 0
 
-  source         = "../../modules/network"
-  environment    = var.environment
-  cidr_block     = var.cidr_block
-  subnet_public  = var.subnet_public
-  subnet_private = var.subnet_private
+  source                   = "../../modules/network"
+  environment              = var.environment
+  cidr_block               = var.cidr_block
+  alb_subnet_public        = var.alb_subnet_public
+  frontend_subnet_private  = var.frontend_subnet_private
+  backend_subnet_private   = var.backend_subnet_private
+  db_subnet_private        = var.db_subnet_private
 
   tags = {
     Project = var.project
@@ -88,7 +90,7 @@ module "alb" {
   source = "../../modules/alb"
 
   vpc_id            = local.deploy_full_stack ? module.network[0].vpc_id : null
-  public_subnet_ids = local.deploy_full_stack ? module.network[0].subnet_public_id : null
+  public_subnet_ids = local.deploy_full_stack ? module.network[0].alb_subnet_ids : null
 
   project     = var.project
   environment = var.environment
@@ -118,7 +120,7 @@ module "web_asg" {
   root_volume_size = var.root_volume_size
 
   sg_id      = local.deploy_full_stack ? module.security[0].web_sg_id : null
-  subnet_ids = local.deploy_full_stack ? module.network[0].subnet_public_id : null
+  subnet_ids = local.deploy_full_stack ? module.network[0].frontend_subnet_ids : null
 
   target_group_arns = local.deploy_full_stack ? [module.alb[0].frontend_tg_arn] : []
 
@@ -154,7 +156,7 @@ module "app_asg" {
   root_volume_size = var.root_volume_size
 
   sg_id      = local.deploy_full_stack ? module.security[0].app_sg_id : null
-  subnet_ids = local.deploy_full_stack ? module.network[0].subnet_private_id : null
+  subnet_ids = local.deploy_full_stack ? module.network[0].backend_subnet_ids : null
 
   target_group_arns = local.deploy_full_stack ? [module.alb[0].backend_tg_arn] : []
 
@@ -189,7 +191,7 @@ module "database_rds" {
   project     = var.project
   environment = var.environment
 
-  subnet_ids = local.deploy_full_stack ? module.network[0].subnet_private_id : null
+  subnet_ids = local.deploy_full_stack ? module.network[0].db_subnet_ids : null
   db_sg_id   = local.deploy_full_stack ? module.security[0].db_sg_id : null
 
   db_name  = var.db_name
@@ -240,7 +242,7 @@ module "api_ssm_parameters" {
 #   #WEB
 #   ami_id_web                   = var.ami_id_web
 #   instance_type_web        = var.instance_type_web
-#   subnet_id_web            = module.network.subnet_public_id[0]
+#   subnet_id_web            = module.network.alb_subnet_ids[0]
 #   security_groups_web_id = module.security.web_sg_id
 #   key_name             = var.key_name
 #   root_volume_size     = var.root_volume_size
@@ -248,7 +250,7 @@ module "api_ssm_parameters" {
 #   #APP
 #   ami_id_app                   = var.ami_id_app
 #   instance_type_app        = var.instance_type_app
-#   subnet_id_app            = module.network.subnet_private_id[0]
+#   subnet_id_app            = module.network.backend_subnet_ids[0]
 #   security_groups_app_id = module.security.app_sg_id
 
 
