@@ -14,7 +14,7 @@ Environment=PYTHONUNBUFFERED=1
 
 ExecStart=/srv/{{ app_name }}/venv/bin/gunicorn {{ backend_app }} \
   --bind 0.0.0.0:8000 \
-  --workers 3 \
+  --workers 2 \
   --worker-class gthread \
   --threads 2 \
   --worker-tmp-dir /dev/shm \

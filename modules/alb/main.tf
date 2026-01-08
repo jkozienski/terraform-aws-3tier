@@ -6,6 +6,11 @@ resource "aws_lb_target_group" "frontend" {
   target_type = "instance"
   vpc_id      = var.vpc_id
 
+  stickiness {
+    enabled = false
+    type    = "lb_cookie"
+  }
+
   health_check {
     enabled             = true
     interval            = 30
@@ -25,6 +30,11 @@ resource "aws_lb_target_group" "backend" {
   protocol    = "HTTP"
   target_type = "instance"
   vpc_id      = var.vpc_id
+
+  stickiness {
+    enabled = false
+    type    = "lb_cookie"
+  }
 
   health_check {
     enabled             = true
