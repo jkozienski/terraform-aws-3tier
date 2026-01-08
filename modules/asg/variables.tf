@@ -51,12 +51,12 @@ variable "min_size" {
 
 variable "max_size" {
   type        = number
-  default     = 1
+  default     = 2
 }
 
 variable "desired_capacity" {
   type        = number
-  default     = 1
+  default     = 2
 }
 
 variable "tags" {
