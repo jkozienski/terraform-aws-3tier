@@ -10,9 +10,6 @@ resource "aws_launch_template" "this" {
 
   user_data = var.user_data
 
-
-
-  # Opcjonalny IAM instance profile
   dynamic "iam_instance_profile" {
     for_each = var.instance_profile_arn == null ? [] : [1]
 
@@ -53,7 +50,7 @@ resource "aws_autoscaling_group" "this" {
   max_size            = var.max_size
   #desired_capacity    = var.desired_capacity
   vpc_zone_identifier = var.subnet_ids
-
+  default_cooldown          = 60
   target_group_arns = var.target_group_arns
 
   health_check_type         = "ELB"
@@ -92,36 +89,21 @@ resource "aws_autoscaling_group" "this" {
 }
 
 # Target Tracking Scaling Policy
-resource "aws_autoscaling_policy" "scale_up" {
-  name                   = "${var.name}-scale-up"
+resource "aws_autoscaling_policy" "scale_up_down" {
+  name                   = "${var.name}-scale-up-down"
   #metric_aggregation_type = "Average"
   policy_type = "TargetTrackingScaling"
   autoscaling_group_name = aws_autoscaling_group.this.name
   
   target_tracking_configuration {
-    target_value = 30 
+    target_value = 25 
 
     predefined_metric_specification {
       predefined_metric_type = "ASGAverageCPUUtilization"  
     }
+    estimated_instance_warmup = 30 
   }
 
   depends_on = [aws_autoscaling_group.this]
 }
 
-resource "aws_autoscaling_policy" "scale_down" {
-  name                   = "${var.name}-scale-down"
-  #metric_aggregation_type = "Average"
-  policy_type = "TargetTrackingScaling"
-  autoscaling_group_name = aws_autoscaling_group.this.name
- 
-  target_tracking_configuration {
-    target_value = 30  
-
-    predefined_metric_specification {
-      predefined_metric_type = "ASGAverageCPUUtilization"  
-    }
-  }
-
-  depends_on = [aws_autoscaling_group.this]
-}
