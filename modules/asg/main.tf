@@ -51,7 +51,7 @@ resource "aws_autoscaling_group" "this" {
   name                = "${var.name}-asg"
   min_size            = var.min_size
   max_size            = var.max_size
-  desired_capacity    = var.desired_capacity
+  #desired_capacity    = var.desired_capacity
   vpc_zone_identifier = var.subnet_ids
 
   target_group_arns = var.target_group_arns
@@ -94,7 +94,7 @@ resource "aws_autoscaling_group" "this" {
 # Target Tracking Scaling Policy
 resource "aws_autoscaling_policy" "scale_up" {
   name                   = "${var.name}-scale-up"
-  metric_aggregation_type = "Average"
+  #metric_aggregation_type = "Average"
   policy_type = "TargetTrackingScaling"
   autoscaling_group_name = aws_autoscaling_group.this.name
   
@@ -111,7 +111,7 @@ resource "aws_autoscaling_policy" "scale_up" {
 
 resource "aws_autoscaling_policy" "scale_down" {
   name                   = "${var.name}-scale-down"
-  metric_aggregation_type = "Average"
+  #metric_aggregation_type = "Average"
   policy_type = "TargetTrackingScaling"
   autoscaling_group_name = aws_autoscaling_group.this.name
  
