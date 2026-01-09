@@ -65,6 +65,30 @@ variable "instance_type_app" {
   type = string
 }
 
+variable "min_size_web_asg" {
+  type        = number
+}
+
+variable "max_size_web_asg" {
+  type        = number
+}
+
+variable "desired_capacity_web_asg" {
+  type        = number
+}
+
+variable "min_size_app_asg" {
+  type        = number
+}
+
+variable "max_size_app_asg" {
+  type        = number
+}
+
+variable "desired_capacity_app_asg" {
+  type        = number
+}
+
 variable "instance_profile_arn" {
   type    = string
   default = null

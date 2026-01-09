@@ -118,6 +118,9 @@ module "web_asg" {
   instance_type    = var.instance_type_web
   key_name         = var.key_name
   root_volume_size = var.root_volume_size
+  min_size         = var.min_size_web_asg
+  max_size         = var.max_size_web_asg
+  desired_capacity = var.desired_capacity_web_asg
 
   sg_id      = local.deploy_full_stack ? module.security[0].web_sg_id : null
   subnet_ids = local.deploy_full_stack ? module.network[0].frontend_subnet_ids : null
@@ -154,6 +157,9 @@ module "app_asg" {
   instance_type    = var.instance_type_app
   key_name         = var.key_name
   root_volume_size = var.root_volume_size
+  min_size         = var.min_size_app_asg
+  max_size        = var.max_size_app_asg
+  desired_capacity = var.desired_capacity_app_asg
 
   sg_id      = local.deploy_full_stack ? module.security[0].app_sg_id : null
   subnet_ids = local.deploy_full_stack ? module.network[0].backend_subnet_ids : null

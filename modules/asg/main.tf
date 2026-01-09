@@ -66,11 +66,9 @@ resource "aws_autoscaling_group" "this" {
 
   instance_refresh {
     strategy = "Rolling"
-
     preferences {
       min_healthy_percentage = 50
     }
-
     triggers = ["launch_template"]
   }
 
@@ -91,4 +89,39 @@ resource "aws_autoscaling_group" "this" {
     value               = var.environment
     propagate_at_launch = true
   }
+}
+
+# Target Tracking Scaling Policy
+resource "aws_autoscaling_policy" "scale_up" {
+  name                   = "${var.name}-scale-up"
+  metric_aggregation_type = "Average"
+  policy_type = "TargetTrackingScaling"
+  autoscaling_group_name = aws_autoscaling_group.this.name
+  
+  target_tracking_configuration {
+    target_value = 30 
+
+    predefined_metric_specification {
+      predefined_metric_type = "ASGAverageCPUUtilization"  
+    }
+  }
+
+  depends_on = [aws_autoscaling_group.this]
+}
+
+resource "aws_autoscaling_policy" "scale_down" {
+  name                   = "${var.name}-scale-down"
+  metric_aggregation_type = "Average"
+  policy_type = "TargetTrackingScaling"
+  autoscaling_group_name = aws_autoscaling_group.this.name
+ 
+  target_tracking_configuration {
+    target_value = 30  
+
+    predefined_metric_specification {
+      predefined_metric_type = "ASGAverageCPUUtilization"  
+    }
+  }
+
+  depends_on = [aws_autoscaling_group.this]
 }
