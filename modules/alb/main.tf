@@ -5,6 +5,7 @@ resource "aws_lb_target_group" "frontend" {
   protocol    = "HTTP"
   target_type = "instance"
   vpc_id      = var.vpc_id
+  deregistration_delay = 45
 
   stickiness {
     enabled = false
@@ -13,13 +14,13 @@ resource "aws_lb_target_group" "frontend" {
 
   health_check {
     enabled             = true
-    interval            = 30
+    interval            = 10
     timeout             = 5
     path                = "/healthz"
     protocol            = "HTTP"
     matcher             = "200"
-    healthy_threshold   = 3
-    unhealthy_threshold = 3
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
   }
 }
 
@@ -30,6 +31,7 @@ resource "aws_lb_target_group" "backend" {
   protocol    = "HTTP"
   target_type = "instance"
   vpc_id      = var.vpc_id
+  deregistration_delay = 45
 
   stickiness {
     enabled = false
@@ -38,13 +40,13 @@ resource "aws_lb_target_group" "backend" {
 
   health_check {
     enabled             = true
-    interval            = 30
+    interval            = 10
     timeout             = 5
     path                = "/health"
     protocol            = "HTTP"
     matcher             = "200-399"
-    healthy_threshold   = 3
-    unhealthy_threshold = 3
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
   }
 }
 

@@ -1,7 +1,8 @@
 #!/bin/bash
 set -xe
 
-echo "[BACKEND] Starting user-data at $(date)" >> /var/log/user-data-app.log
+ANSIBLE_START=$(date +%s)
+echo "[BACKEND] Ansible started at $(date)" >> /var/log/user-data-app.log
 
 export app_env="${app_env}"
 export app_region="${app_region}"
@@ -25,4 +26,8 @@ ansible-playbook backend.yml -i localhost, -c local \
   -e "source_repo_url=${source_repo_url}" \
   -e "infra_repo_url=${infra_repo_url}" >> /var/log/user-data-app.log 2>&1
 
-echo "[BACKEND] User-data finished at $(date)" >> /var/log/user-data-app.log
+ANSIBLE_END=$(date +%s)
+ANSIBLE_DURATION=$((ANSIBLE_END - ANSIBLE_START))
+
+echo "[BACKEND] Ansible finished at $(date)" >> /var/log/user-data-app.log
+echo "[BACKEND] Ansible execution time: $ANSIBLE_DURATION seconds" >> /var/log/user-data-app.log
