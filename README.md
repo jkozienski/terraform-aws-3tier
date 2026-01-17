@@ -1,26 +1,69 @@
-# Automation of Deployment and Configuration of a Web Application Environment on the AWS Platform 
+# Automation of Deployment and Configuration of a Web Application Environment on the AWS Platform  
 ### Terraform & Ansible – Infrastructure as Code / Configuration as Code
 
-## Streszczenie
+## Abstract
 
-Celem pracy było zaprojektowanie oraz implementacja **zautomatyzowanego procesu wdrażania aplikacji webowej w chmurze Amazon Web Services (AWS)**, obejmującego zarówno tworzenie infrastruktury, jak i konfigurację środowiska aplikacyjnego. Opracowane rozwiązanie stanowi **parametryzowany szablon infrastruktury**, umożliwiający szybkie, powtarzalne i spójne wdrażanie środowisk bez konieczności ręcznej konfiguracji zasobów.
+The aim of this thesis was to design and implement an **automated process for deploying a web application environment in the Amazon Web Services (AWS) cloud**, covering both infrastructure provisioning and application environment configuration. The developed solution constitutes a **parameterized infrastructure template**, enabling fast, repeatable, and consistent deployment of application environments without the need for manual resource configuration.
 
-W ramach pracy wykorzystano narzędzie **Terraform**, realizujące podejście *Infrastructure as Code (IaC)*, odpowiedzialne za automatyczne tworzenie warstwy sieciowej, mechanizmów bezpieczeństwa oraz kluczowych komponentów infrastruktury chmurowej, takich jak:
+As part of the project, **Terraform** was used to implement the *Infrastructure as Code (IaC)* approach, responsible for the automated creation of the network layer, security mechanisms, and key cloud infrastructure components such as:
 
 - Virtual Private Cloud (VPC),
 - Security Groups,
 - Application Load Balancer (ALB),
 - Auto Scaling Groups (ASG),
-- relacyjna baza danych **Amazon RDS**.
+- the **Amazon RDS** relational database.
 
-Konfiguracja instancji Amazon EC2 została zrealizowana przy użyciu narzędzia **Ansible**, implementującego podejście *Configuration as Code (CaC)*. Ansible odpowiadał za instalację wymaganych usług, wdrożenie kodu aplikacji oraz konfigurację serwerów frontendowych i backendowych w sposób w pełni automatyczny.
+The configuration of Amazon EC2 instances was carried out using **Ansible**, implementing the *Configuration as Code (CaC)* approach. Ansible was responsible for installing the required services, deploying the application code, and configuring frontend and backend servers in a fully automated manner.
 
-W ramach projektu wdrożono **przykładową aplikację webową**, która posłużyła do weryfikacji poprawności działania zaprojektowanej infrastruktury oraz całego procesu automatycznego wdrażania. Uzyskane rezultaty potwierdziły skuteczność zastosowanego podejścia oraz możliwość jego wykorzystania jako uniwersalnego szablonu wdrożeniowego dla aplikacji webowych w środowisku chmurowym.
+As part of the project, a **sample web application** was deployed to verify the correct operation of the designed infrastructure and the entire automated deployment process. The obtained results confirmed the effectiveness of the adopted approach and demonstrated its applicability as a universal deployment template for web applications in a cloud environment.
 
-## Wykorzystane technologie
+## Technologies Used
 
 - **Amazon Web Services (AWS)**
-- **Terraform** - Infrastructure as Code
-- **Ansible** - Configuration as Code
+- **Terraform** – Infrastructure as Code
+- **Ansible** – Configuration as Code
 - **EC2, ALB, ASG, RDS, VPC**
-- **Linux - ubuntu**
+- **Linux (Ubuntu)**
+
+## How to Run the Project
+
+To deploy the infrastructure, navigate to the directory corresponding to the target environment:
+
+```bash
+cd ./envs/prod/
+```
+
+or
+
+```bash
+cd ./envs/dev/
+```
+
+### Initialize Terraform
+
+Initialize the Terraform working directory:
+
+```bash
+terraform init
+```
+
+### First Run (Domain Delegation)
+
+If this is the first run, execute Terraform with the option that displays the DNS name servers required for domain delegation:
+
+```bash
+terraform apply -var=show_nameservers=true
+```
+
+This command creates a public DNS hosted zone in **Amazon Route53** and outputs a list of name servers.  
+Copy these values and configure them at your domain registrar by replacing the existing name servers.
+
+> This step is required only once.
+
+### Subsequent Runs / Infrastructure Updates
+
+For all subsequent executions, or when updating the infrastructure configuration, run:
+
+```bash
+terraform apply
+```
