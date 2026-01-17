@@ -37,13 +37,6 @@ resource "aws_iam_role_policy_attachment" "cloudwatch" {
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
 }
 
-# Niepotrzebne
-# Opt.
-# resource "aws_iam_role_policy_attachment" "s3_read_only" {
-#   role       = aws_iam_role.ec2_role.name
-#   policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
-# }
-
 
 # Instance Profile #
 resource "aws_iam_instance_profile" "ec2_profile" {

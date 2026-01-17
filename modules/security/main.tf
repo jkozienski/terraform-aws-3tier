@@ -16,14 +16,6 @@ resource "aws_security_group" "todolist_web" {
 }
 
 
-# resource "aws_vpc_security_group_ingress_rule" "todolist_web_http_test" {
-#   security_group_id = aws_security_group.todolist_web.id
-#   cidr_ipv4         = "0.0.0.0/0"
-
-#   ip_protocol = "tcp"
-#   from_port   = 80
-#   to_port     = 80
-# }
 
 resource "aws_vpc_security_group_ingress_rule" "todolist_web_from_alb" {
   security_group_id            = aws_security_group.todolist_web.id
@@ -35,15 +27,6 @@ resource "aws_vpc_security_group_ingress_rule" "todolist_web_from_alb" {
 
 }
 
-# resource "aws_vpc_security_group_ingress_rule" "todolist_web_ssh" {
-#   for_each = toset(var.ssh_cidr_blocks)
-#   security_group_id = aws_security_group.todolist_web.id
-#   cidr_ipv4         = each.key
-
-#   ip_protocol = "tcp"
-#   from_port   = 22
-#   to_port     = 22
-# }
 
 resource "aws_vpc_security_group_egress_rule" "todolist_web_all" {
   security_group_id = aws_security_group.todolist_web.id
@@ -77,15 +60,6 @@ resource "aws_vpc_security_group_ingress_rule" "todolist_app_from_web" {
   from_port   = 8000
   to_port     = 8000
 }
-
-# resource "aws_vpc_security_group_ingress_rule" "todolist_app_ssh_from_web" {
-#   security_group_id            = aws_security_group.todolist_app.id
-#   referenced_security_group_id = aws_security_group.todolist_web.id
-
-#   ip_protocol = "tcp"
-#   from_port   = 22
-#   to_port     = 22
-# }
 
 resource "aws_vpc_security_group_ingress_rule" "todolist_app_from_alb" {
   security_group_id            = aws_security_group.todolist_app.id
@@ -131,14 +105,7 @@ resource "aws_vpc_security_group_ingress_rule" "todolist_db_from_app" {
   to_port     = 5432
 }
 
-# resource "aws_vpc_security_group_ingress_rule" "todolist_db_ssh_from_web" {
-#   security_group_id            = aws_security_group.todolist_db.id
-#   referenced_security_group_id = aws_security_group.todolist_web.id
 
-#   ip_protocol = "tcp"
-#   from_port   = 22
-#   to_port     = 22
-# }
 
 resource "aws_vpc_security_group_egress_rule" "todolist_db_all" {
   security_group_id = aws_security_group.todolist_db.id

@@ -30,7 +30,7 @@
     mode: "0755"
   become: yes
 
-- name: Clone application repository (frontend+backend mono-repo)
+- name: Clone application repository 
   git:
     repo: "{{ source_repo_url }}"
     dest: "{{ repo_checkout_dir }}"

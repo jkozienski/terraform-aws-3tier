@@ -9,7 +9,7 @@ resource "aws_route53_zone" "this" {
   )
 }
 
-# kozkowsky.space -> ALB
+# DNS domain -> ALB
 resource "aws_route53_record" "root_domain" {
   count = var.create_alias_records ? 1 : 0
 
@@ -24,7 +24,7 @@ resource "aws_route53_record" "root_domain" {
   }
 }
 
-# www.kozkowsky.space -> ALB
+#  DNS domain with www -> ALB
 resource "aws_route53_record" "www_domain" {
   count = var.create_alias_records ? 1 : 0
 

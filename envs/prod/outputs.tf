@@ -33,7 +33,7 @@ output "db_sg_id" {
   value = local.deploy_full_stack ? module.security[0].db_sg_id : null
 }
 
-#TYLKO DO TESTOWANIA BEZ DNS
+
 output "alb_dns_name" {
   description = "Public DNS name Application Load Balancera"
   value       = local.deploy_full_stack ? module.alb[0].dns_name : null

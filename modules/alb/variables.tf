@@ -19,8 +19,6 @@ variable "alb_sg_id" {
   type        = string
 }
 
-
-#ZAKOMENTOWANE BO TESTUJE BEZ DNS
 variable "acm_certificate_arn" {
   type = string
   default = null

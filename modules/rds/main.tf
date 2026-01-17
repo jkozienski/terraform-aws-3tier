@@ -36,7 +36,7 @@ resource "aws_db_instance" "this" {
   multi_az            = var.multi_az
 
   performance_insights_enabled = false
-  skip_final_snapshot     = true            # dev = true, prod = false
+  skip_final_snapshot     = true            
   deletion_protection     = var.deletion_protection
 
   auto_minor_version_upgrade = true

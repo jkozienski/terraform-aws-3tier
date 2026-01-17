@@ -52,9 +52,6 @@ variable "max_size" {
   type        = number
 }
 
-# variable "desired_capacity" {
-#   type        = number
-# }
 
 variable "tags" {
   type        = map(string)

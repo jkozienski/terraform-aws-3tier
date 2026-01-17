@@ -19,7 +19,6 @@ output "backend_tg_arn" {
 }
 
 
-#TYLKO DO TESTOWANIA BEZ DNS
 output "alb_dns_name" {
   value = aws_lb.this.dns_name
 }

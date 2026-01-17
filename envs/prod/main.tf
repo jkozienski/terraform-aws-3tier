@@ -54,7 +54,7 @@ module "iam" {
 }
 
 
-#=============
+# DNS Route53 #
 module "route53" {
   source      = "../../modules/route53"
 
@@ -69,6 +69,7 @@ module "route53" {
   }
 }
 
+# ACM #
 module "acm" {
   count = local.deploy_full_stack ? 1 : 0
 
@@ -120,7 +121,6 @@ module "web_asg" {
   root_volume_size = var.root_volume_size
   min_size         = var.min_size_web_asg
   max_size         = var.max_size_web_asg
-  #desired_capacity = var.desired_capacity_web_asg
 
   sg_id      = local.deploy_full_stack ? module.security[0].web_sg_id : null
   subnet_ids = local.deploy_full_stack ? module.network[0].frontend_subnet_ids : null
@@ -146,7 +146,7 @@ module "web_asg" {
   }
 }
 
-
+# ASG #  
 module "app_asg" {
   count = local.deploy_full_stack ? 1 : 0
 
@@ -159,7 +159,6 @@ module "app_asg" {
   root_volume_size = var.root_volume_size
   min_size         = var.min_size_app_asg
   max_size        = var.max_size_app_asg
-  #desired_capacity = var.desired_capacity_app_asg
 
   sg_id      = local.deploy_full_stack ? module.security[0].app_sg_id : null
   subnet_ids = local.deploy_full_stack ? module.network[0].backend_subnet_ids : null
@@ -173,8 +172,8 @@ module "app_asg" {
 
   user_data = base64encode(
     templatefile("../../modules/asg/user_data_app.tpl", {
-      app_env   = var.environment #pass environment to ansible playbook
-      app_region   = var.region  #pass environment to ansible playbook
+      app_env   = var.environment #pass to ansible playbook
+      app_region   = var.region  #pass to ansible playbook
       ssm_prefix = "/${var.project}/${var.environment}/api"
       source_repo_url = var.source_repo_url
       infra_repo_url = var.infra_repo_url
@@ -237,36 +236,3 @@ module "api_ssm_parameters" {
 
 
 
-# EC2 INSTANCE #
-
-
-# module "ec2_service" {
-#   source               = "../../modules/ec2_service"
-#   project              = var.project
-#   environment          = var.environment
-
-#   #WEB
-#   ami_id_web                   = var.ami_id_web
-#   instance_type_web        = var.instance_type_web
-#   subnet_id_web            = module.network.alb_subnet_ids[0]
-#   security_groups_web_id = module.security.web_sg_id
-#   key_name             = var.key_name
-#   root_volume_size     = var.root_volume_size
-
-#   #APP
-#   ami_id_app                   = var.ami_id_app
-#   instance_type_app        = var.instance_type_app
-#   subnet_id_app            = module.network.backend_subnet_ids[0]
-#   security_groups_app_id = module.security.app_sg_id
-
-
-#   #instance_profile_arn = var.instance_profile_arn
-
-#    tags = merge(
-#     {
-#       Project = var.project
-#     },
-#     var.tags,
-
-#    )
-# }
